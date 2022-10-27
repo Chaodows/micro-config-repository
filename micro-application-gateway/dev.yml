@@ -1,0 +1,31 @@
+spring:
+    application:
+        name: micro-getway
+    cloud:
+      gateway:
+          discovery:
+          locator:
+              enabled: true
+          routes:
+              - id: provider
+                uri: lb://MICRO-PROVIDER
+                predicates:
+                    - Path=/micro-provider/**
+                filters:
+                    - StripPrefix=1
+              - id: eureka01
+                uri: lb://micro-eureka01
+                predicates:
+                    - Path=/eureka/**
+                filters:
+                    - StripPrefix=1
+eureka:
+    instance:
+        hostname: gateway-service
+    client:
+        service-url:
+            register-with-eureka: true
+            fetch-registry: true # 缓存服务注册信息，定期更新，时间间隔默认30s.
+            defaultZone: http://localhost:8761/eureka/,http://eureka02:8762/eureka/,http://eureka03:8763/eureka/
+server:
+    port: 9002
